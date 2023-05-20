@@ -1,23 +1,32 @@
-import logo from './logo.svg';
+import { useEffect, useState } from 'react';
 import './App.css';
+import Table from './components/Table';
 
 function App() {
+
+  const [data, setData] = useState();
+  useEffect(()=>{
+    const fetchData = async () => {
+      try {
+        const response = await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false")
+
+        if (!response.ok) {
+          throw new Error("Request Failed")
+        }
+        const data = await response.json();
+        // console.log(data)    
+        setData(data);
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    fetchData();
+  },[])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+     <Table data={data}></Table>
     </div>
   );
 }
